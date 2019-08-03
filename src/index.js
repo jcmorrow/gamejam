@@ -5,7 +5,7 @@ function create() {
     this.state = { pointer: {}, theta: 0 };
     this.planets = [
         {
-            x: 300, y: 300, radius: 100
+            x: 300, y: 300, radius: 50
         }
     ]
 
