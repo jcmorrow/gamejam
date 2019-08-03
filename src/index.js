@@ -19,6 +19,8 @@ var config = {
 var game = new Phaser.Game(config);
 const Matter = Phaser.Physics.Matter.Matter;
 
+let spacebar;
+
 function gravity(bodyA, bodyB) {
     var bToA = Matter.Vector.sub(bodyB.position, bodyA.position),
         distanceSq = Matter.Vector.magnitudeSquared(bToA) || 0.0001,
@@ -27,7 +29,6 @@ function gravity(bodyA, bodyB) {
         force = Matter.Vector.mult(normal, magnitude);
 
     // only apply force to our ship, which I guess is always bodyB
-    // Matter.Body.applyForce(bodyA, bodyA.position, Matter.Vector.neg(force));
     Matter.Body.applyForce(bodyB, bodyB.position, force);
 }
 
@@ -45,8 +46,9 @@ function create() {
         fillStyle: { color: 0xffffff }
     });
 
-    let planet = new Phaser.Geom.Circle(400, 300, 20);
+    // this.cameras.main.setSize(800, 300);
 
+    let planet = new Phaser.Geom.Circle(400, 300, 20);
     let planet2 = this.matter.add.image(500, 100, 'planet', null, {
         shape: {
             type: 'circle',
@@ -57,7 +59,6 @@ function create() {
         },
         mass: 150
     });
-
     let planet3 = this.matter.add.image(100, 500, 'planet', null, {
         shape: {
             type: 'circle',
@@ -72,16 +73,24 @@ function create() {
     planet2.body.isStatic = true;
     planet3.body.isStatic = true;
 
-    let ship = this.matter.add.image(200, 50, 'ship', {
+    this.ship = this.matter.add.image(350, 300, 'ship', {
         plugin: {
             attractors: [gravity]
         }
     });
+
+    this.ship.body.isStatic = true;
+
+
+    // this.cameras.main.startFollow(ship);
+    spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
     graphics.strokeCircleShape(planet);
     graphics.fillCircleShape(planet);
 }
 
 function update() {
-
+    if (Phaser.Input.Keyboard.JustDown(spacebar)) {
+        this.ship.body.isStatic = false;
+    }
 };
