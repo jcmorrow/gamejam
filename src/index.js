@@ -26,12 +26,12 @@ function gravity(bodyA, bodyB) {
     var bToA = Matter.Vector.sub(bodyB.position, bodyA.position),
         distanceSq = Matter.Vector.magnitudeSquared(bToA) || 0.0001,
         normal = Matter.Vector.normalise(bToA),
-        magnitude = -0.01 * (bodyA.mass * bodyB.mass / distanceSq),
+        magnitude = -0.001 * (bodyA.mass * bodyB.mass / distanceSq),
         force = Matter.Vector.mult(normal, magnitude);
 
     // only apply force to our ship, which I guess is always bodyB
     Matter.Body.applyForce(bodyB, bodyB.position, force);
-    if (bodyB.id == 7) {
+    if (bodyB.id == 9) {
         Matter.Body.rotate(bodyB, Math.PI * .001);
     }
 }
@@ -60,7 +60,7 @@ function create() {
 
     // this.cameras.main.setSize(800, 300);
 
-    this.planet = new Phaser.Geom.Circle(400, 300, 20);
+    this.planet = this.matter.add.image(400, 300, 'earth');
     this.planet2 = this.matter.add.image(500, 100, 'green_planet', null, {
         shape: {
             type: 'circle',
@@ -81,11 +81,25 @@ function create() {
         },
         mass: 300
     });
+    this.planet4 = this.matter.add.image(650, 450, 'big_fire_planet', null, {
+        shape: {
+            type: 'circle',
+            radius: 50
+        },
+        plugins: {
+            attractors: [gravity]
+        },
+        mass: 500
+    })
 
+    this.planet.body.isStatic = true;
     this.planet2.body.isStatic = true;
     this.planet3.body.isStatic = true;
+    this.planet4.body.isStatic = true;
+    this.planet.body.mass = 0;
     this.planet2.body.mass = 0;
     this.planet3.body.mass = 0;
+    this.planet4.body.mass = 0;
 
     this.ship = this.matter.add.image(350, 300, 'ship', {
         plugin: {
@@ -94,7 +108,6 @@ function create() {
     });
 
     // this.ship.body.isStatic = true;
-    // this.ship.body.ignoreGravity = true;
     console.log(this.ship)
 
 
@@ -106,6 +119,7 @@ function create() {
 }
 
 function update() {
+    // console.log(this.ship.body.angle);
     // THETA += 0.05;
     // this.ship.setVelocityX(Math.cos(THETA) * .1);
     // this.ship.setVelocityY(Math.sin(THETA) * .1);
@@ -127,10 +141,13 @@ function update() {
         this.ship.body.isStatic = false;
         this.planet2.body.mass = 150;
         this.planet3.body.mass = 300;
+        this.planet4.body.mass = 500;
     }
 
     // TODO: cap time at whenever thrust meter is full
     if (Phaser.Input.Keyboard.DownDuration(spacebar, 100000000)) {
-        this.ship.thrust(.00001);
+        // for whatever reason, the default angle of the ship points right, so by thusting left,
+        // we're going straight
+        this.ship.thrustLeft(.00005);
     }
 };
