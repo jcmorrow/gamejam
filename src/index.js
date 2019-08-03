@@ -1,68 +1,13 @@
-function preload() {
-    this.load.image('planet', 'black_planet.jpeg');
-}
-
-function create() {
-    this.state = { pointer: {}, theta: 0 };
-    this.planets = [
-        {
-            x: 300, y: 300, radius: 50
-        }
-    ]
-
-    this.graphics = this.add.graphics(0, 0);
-    this.matter.world.engine.world.gravity.y = 0;
-    this.matter.add.image(500, 100, 'planet', null, {
-        shape: {
-            type: 'circle',
-            radius: 64
-        }
-    });
-    this.input.on('pointermove', function (pointer) {
-
-        let v = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY);
-        this.state.pointer = { x: v.x, y: v.y };
-
-    }, this);
-}
-
-function update() {
-    this.graphics.destroy();
-    this.graphics = this.add.graphics(0, 0);
-
-    this.planets.forEach((p) => {
-        this.matter.add.circle(p.x, p.y, p.radius);
-        this.graphics.fillStyle(0xFFFFFF, 1.0);
-        this.graphics.fillCircle(p.x, p.y, p.radius);
-    });
-
-    this.graphics.fillStyle(0xFFFFFF, 1.0);
-    let shipX = this.planets[0].x + Math.cos(this.state.theta) * 110;
-    let shipY = this.planets[0].y + Math.sin(this.state.theta) * 110;
-
-    this.graphics.fillCircle(shipX, shipY, 10);
-    this.state.theta = this.state.theta + 0.05;
-
-    // this.graphics.lineStyle(5, 0xFF00FF, 1.0);
-    // this.graphics.beginPath();
-    // this.graphics.moveTo(this.planets[0].x, this.planets[0].y);
-    // this.graphics.lineTo(
-    //     (this.state.pointer.x - this.planets[0].x) * 100,
-    //     (this.state.pointer.y - this.planets[0].y) * 100
-    // );
-    // this.graphics.closePath();
-    // this.graphics.strokePath();
-};
-
 var config = {
     type: Phaser.AUTO,
     width: 800,
     height: 600,
     physics: {
         default: 'matter',
-        // arcade: {
-        //     gravity: { y: 0 }
-        // }
+        matter: {
+            plugins: {
+                attractors: true
+            }        }
     },
     scene: {
         preload: preload,
@@ -72,3 +17,118 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
+const Matter = Phaser.Physics.Matter.Matter;
+let THETA = 0;
+
+let spacebar;
+
+function gravity(bodyA, bodyB) {
+    var bToA = Matter.Vector.sub(bodyB.position, bodyA.position),
+        distanceSq = Matter.Vector.magnitudeSquared(bToA) || 0.0001,
+        normal = Matter.Vector.normalise(bToA),
+        magnitude = -0.001 * (bodyA.mass * bodyB.mass / distanceSq),
+        force = Matter.Vector.mult(normal, magnitude);
+
+    // only apply force to our ship, which I guess is always bodyB
+    Matter.Body.applyForce(bodyB, bodyB.position, force);
+    if (bodyB.id == 9) {
+        Matter.Body.rotate(bodyB, Math.PI * .001);
+    }
+}
+
+function preload() {
+    this.load.image('big_fire_planet', 'assets/big_fire_planet.png');
+    this.load.image('earth', 'assets/earth.png');
+    this.load.image('medium_earth', 'assets/medium_earth.png');
+    this.load.image('small_brown_planet', 'assets/small_brown_planet.png');
+    this.load.image('green_planet', 'assets/green_planet.png');
+    this.load.image('brown_planet', 'assets/brown_planet.png');
+    this.load.image('planet', 'assets/black_back_72px_planet.png');
+    this.load.image('ship', 'assets/smallship.png');
+    this.load.image('bg', 'assets/bg.png');
+}
+
+function create() {
+    this.matter.world.setBounds(0, 0, game.config.width, game.config.height);
+    this.matter.world.engine.world.gravity.y = 0;
+    this.add.image('bg', 800, 600);
+
+    let graphics = this.add.graphics({
+        lineStyle: { color: 0xff00ff },
+        fillStyle: { color: 0xffffff }
+    });
+
+    // this.cameras.main.setSize(800, 300);
+
+    this.planet = this.matter.add.image(400, 300, 'earth');
+    this.planet2 = this.matter.add.image(500, 100, 'green_planet', null, {
+        shape: {
+            type: 'circle',
+            radius: 37
+        },
+        plugin: {
+            attractors: [gravity]
+        },
+        mass: 150
+    });
+    this.planet3 = this.matter.add.image(100, 500, 'brown_planet', null, {
+        shape: {
+            type: 'circle',
+            radius: 37
+        },
+        plugin: {
+            attractors: [gravity]
+        },
+        mass: 300
+    });
+    this.planet4 = this.matter.add.image(650, 450, 'big_fire_planet', null, {
+        shape: {
+            type: 'circle',
+            radius: 50
+        },
+        plugins: {
+            attractors: [gravity]
+        },
+        mass: 500
+    })
+
+    this.planet.body.isStatic = true;
+    this.planet2.body.isStatic = true;
+    this.planet3.body.isStatic = true;
+    this.planet4.body.isStatic = true;
+    this.planet.body.mass = 0;
+    this.planet2.body.mass = 0;
+    this.planet3.body.mass = 0;
+    this.planet4.body.mass = 0;
+
+    this.ship = this.matter.add.image(350, 300, 'ship', {
+        plugin: {
+            attractors: [gravity]
+        }
+    });
+  
+    this.graphics = this.add.graphics(0, 0);
+    this.matter.world.engine.world.gravity.y = 0;
+
+    // this.cameras.main.startFollow(ship);
+    spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+    graphics.strokeCircleShape(this.planet);
+    graphics.fillCircleShape(this.planet);
+}
+
+function update() {
+    if (Phaser.Input.Keyboard.JustDown(spacebar)) {
+        this.ship.body.isStatic = false;
+        this.planet2.body.mass = 150;
+        this.planet3.body.mass = 300;
+        this.planet4.body.mass = 500;
+    }
+
+    // TODO: cap time at whenever thrust meter is full
+    if (Phaser.Input.Keyboard.DownDuration(spacebar, 100000000)) {
+        // for whatever reason, the default angle of the ship points right, so by thusting left,
+        // we're going straight
+        this.ship.thrustLeft(.00005);
+    }
+};
