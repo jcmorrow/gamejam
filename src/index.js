@@ -37,15 +37,21 @@ function gravity(bodyA, bodyB) {
 }
 
 function preload() {
+    this.load.image('big_fire_planet', 'assets/big_fire_planet.png');
+    this.load.image('earth', 'assets/earth.png');
+    this.load.image('medium_earth', 'assets/medium_earth.png');
+    this.load.image('small_brown_planet', 'assets/small_brown_planet.png');
     this.load.image('green_planet', 'assets/green_planet.png');
     this.load.image('brown_planet', 'assets/brown_planet.png');
     this.load.image('planet', 'assets/black_back_72px_planet.png');
-    this.load.image('ship', 'assets/smallship.png')
+    this.load.image('ship', 'assets/smallship.png');
+    this.load.image('bg', 'assets/bg.png');
 }
 
 function create() {
     this.matter.world.setBounds(0, 0, game.config.width, game.config.height);
     this.matter.world.engine.world.gravity.y = 0;
+    this.add.image('bg', 800, 600);
 
     let graphics = this.add.graphics({
         lineStyle: { color: 0xff00ff },
