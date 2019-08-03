@@ -2,7 +2,7 @@ function preload() {
 }
 
 function create() {
-    this.state = { pointer: {} };
+    this.state = { pointer: {}, theta: 0 };
     this.planets = [
         {
             x: 300, y: 300, radius: 100
@@ -29,15 +29,22 @@ function update() {
         this.graphics.fillCircle(p.x, p.y, p.radius);
     });
 
-    this.graphics.lineStyle(5, 0xFF00FF, 1.0);
-    this.graphics.beginPath();
-    this.graphics.moveTo(this.planets[0].x, this.planets[0].y);
-    this.graphics.lineTo(
-        (this.state.pointer.x - this.planets[0].x) * 100,
-        (this.state.pointer.y - this.planets[0].y) * 100
-    );
-    this.graphics.closePath();
-    this.graphics.strokePath();
+    this.graphics.fillStyle(0xFFFFFF, 1.0);
+    let shipX = this.planets[0].x + Math.cos(this.state.theta) * 110;
+    let shipY = this.planets[0].y + Math.sin(this.state.theta) * 110;
+
+    this.graphics.fillCircle(shipX, shipY, 10);
+    this.state.theta = this.state.theta + 0.05;
+
+    // this.graphics.lineStyle(5, 0xFF00FF, 1.0);
+    // this.graphics.beginPath();
+    // this.graphics.moveTo(this.planets[0].x, this.planets[0].y);
+    // this.graphics.lineTo(
+    //     (this.state.pointer.x - this.planets[0].x) * 100,
+    //     (this.state.pointer.y - this.planets[0].y) * 100
+    // );
+    // this.graphics.closePath();
+    // this.graphics.strokePath();
 };
 
 var config = {
