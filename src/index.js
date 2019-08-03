@@ -25,7 +25,7 @@ function gravity(bodyA, bodyB) {
     var bToA = Matter.Vector.sub(bodyB.position, bodyA.position),
         distanceSq = Matter.Vector.magnitudeSquared(bToA) || 0.0001,
         normal = Matter.Vector.normalise(bToA),
-        magnitude = -0.1 * (bodyA.mass * bodyB.mass / distanceSq),
+        magnitude = -0.01 * (bodyA.mass * bodyB.mass / distanceSq),
         force = Matter.Vector.mult(normal, magnitude);
 
     // only apply force to our ship, which I guess is always bodyB
