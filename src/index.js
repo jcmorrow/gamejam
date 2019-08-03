@@ -106,10 +106,9 @@ function create() {
             attractors: [gravity]
         }
     });
-
-    // this.ship.body.isStatic = true;
-    console.log(this.ship)
-
+  
+    this.graphics = this.add.graphics(0, 0);
+    this.matter.world.engine.world.gravity.y = 0;
 
     // this.cameras.main.startFollow(ship);
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -119,24 +118,6 @@ function create() {
 }
 
 function update() {
-    // console.log(this.ship.body.angle);
-    // THETA += 0.05;
-    // this.ship.setVelocityX(Math.cos(THETA) * .1);
-    // this.ship.setVelocityY(Math.sin(THETA) * .1);
-
-    // var cos = Math.cos(THETA),
-    //   sin = Math.sin(THETA);
-    //
-    // var dx = this.ship.body.position.x - this.planet.x,
-    //   dy = this.ship.body.position.y - this.planet.y;
-    //
-    // this.ship.setPosition({
-    //   x: point.x + (dx * cos - dy * sin),
-    //   y: point.y + (dx * sin + dy * cos)
-    // });
-    //
-    // this.ship.setRotation(body, rotation);
-
     if (Phaser.Input.Keyboard.JustDown(spacebar)) {
         this.ship.body.isStatic = false;
         this.planet2.body.mass = 150;
