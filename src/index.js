@@ -11,6 +11,7 @@ function create() {
     ]
 
     this.graphics = this.add.graphics(0, 0);
+    this.matter.world.engine.world.gravity.y = 0;
     this.matter.add.image(500, 100, 'planet', null, {
         shape: {
             type: 'circle',
