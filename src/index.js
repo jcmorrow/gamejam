@@ -1,5 +1,5 @@
 function preload() {
-
+    this.load.image('planet', 'black_planet.jpeg');
 }
 
 function create() {
@@ -11,6 +11,12 @@ function create() {
     ]
 
     this.graphics = this.add.graphics(0, 0);
+    this.matter.add.image(500, 100, 'planet', null, {
+        shape: {
+            type: 'circle',
+            radius: 64
+        }
+    });
     this.input.on('pointermove', function (pointer) {
 
         let v = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY);
@@ -22,7 +28,6 @@ function create() {
 function update() {
     this.graphics.destroy();
     this.graphics = this.add.graphics(0, 0);
-
 
     this.planets.forEach((p) => {
         this.matter.add.circle(p.x, p.y, p.radius);
@@ -54,9 +59,9 @@ var config = {
     height: 600,
     physics: {
         default: 'matter',
-        arcade: {
-            gravity: { y: 200 }
-        }
+        // arcade: {
+        //     gravity: { y: 0 }
+        // }
     },
     scene: {
         preload: preload,
