@@ -33,6 +33,8 @@ function gravity(bodyA, bodyB) {
 }
 
 function preload() {
+    this.load.image('green_planet', 'assets/green_planet.png');
+    this.load.image('brown_planet', 'assets/brown_planet.png');
     this.load.image('planet', 'assets/black_back_72px_planet.png');
     this.load.image('ship', 'assets/smallship.png')
 }
@@ -49,7 +51,7 @@ function create() {
     // this.cameras.main.setSize(800, 300);
 
     let planet = new Phaser.Geom.Circle(400, 300, 20);
-    let planet2 = this.matter.add.image(500, 100, 'planet', null, {
+    let planet2 = this.matter.add.image(500, 100, 'green_planet', null, {
         shape: {
             type: 'circle',
             radius: 37
@@ -59,7 +61,7 @@ function create() {
         },
         mass: 150
     });
-    let planet3 = this.matter.add.image(100, 500, 'planet', null, {
+    let planet3 = this.matter.add.image(100, 500, 'brown_planet', null, {
         shape: {
             type: 'circle',
             radius: 37
