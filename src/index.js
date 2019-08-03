@@ -7,9 +7,7 @@ var config = {
         matter: {
             plugins: {
                 attractors: true
-            },
-            debug: true
-        }
+            }        }
     },
     scene: {
         preload: preload,
@@ -34,7 +32,8 @@ function gravity(bodyA, bodyB) {
 }
 
 function preload() {
-    this.load.image('planet', 'black_planet.jpeg');
+    this.load.image('planet', 'assets/black_back_72px_planet.png');
+    this.load.image('ship', 'assets/smallship.png')
 }
 
 function create() {
@@ -51,29 +50,29 @@ function create() {
     let planet2 = this.matter.add.image(500, 100, 'planet', null, {
         shape: {
             type: 'circle',
-            radius: 60
+            radius: 37
         },
         plugin: {
             attractors: [gravity]
         },
-        mass: 100
+        mass: 150
     });
 
     let planet3 = this.matter.add.image(100, 500, 'planet', null, {
         shape: {
             type: 'circle',
-            radius: 60
+            radius: 37
         },
         plugin: {
             attractors: [gravity]
         },
-        mass: 200
+        mass: 300
     });
 
     planet2.body.isStatic = true;
     planet3.body.isStatic = true;
 
-    let ship = this.matter.add.circle(200, 50, 10, {
+    let ship = this.matter.add.image(200, 50, 'ship', {
         plugin: {
             attractors: [gravity]
         }
