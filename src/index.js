@@ -18,6 +18,7 @@ var config = {
 
 var game = new Phaser.Game(config);
 const Matter = Phaser.Physics.Matter.Matter;
+let THETA = 0;
 
 let spacebar;
 
@@ -30,6 +31,9 @@ function gravity(bodyA, bodyB) {
 
     // only apply force to our ship, which I guess is always bodyB
     Matter.Body.applyForce(bodyB, bodyB.position, force);
+    if (bodyB.id == 7) {
+        Matter.Body.rotate(bodyB, Math.PI * .001);
+    }
 }
 
 function preload() {
@@ -50,8 +54,8 @@ function create() {
 
     // this.cameras.main.setSize(800, 300);
 
-    let planet = new Phaser.Geom.Circle(400, 300, 20);
-    let planet2 = this.matter.add.image(500, 100, 'green_planet', null, {
+    this.planet = new Phaser.Geom.Circle(400, 300, 20);
+    this.planet2 = this.matter.add.image(500, 100, 'green_planet', null, {
         shape: {
             type: 'circle',
             radius: 37
@@ -61,7 +65,7 @@ function create() {
         },
         mass: 150
     });
-    let planet3 = this.matter.add.image(100, 500, 'brown_planet', null, {
+    this.planet3 = this.matter.add.image(100, 500, 'brown_planet', null, {
         shape: {
             type: 'circle',
             radius: 37
@@ -72,8 +76,10 @@ function create() {
         mass: 300
     });
 
-    planet2.body.isStatic = true;
-    planet3.body.isStatic = true;
+    this.planet2.body.isStatic = true;
+    this.planet3.body.isStatic = true;
+    this.planet2.body.mass = 0;
+    this.planet3.body.mass = 0;
 
     this.ship = this.matter.add.image(350, 300, 'ship', {
         plugin: {
@@ -81,18 +87,44 @@ function create() {
         }
     });
 
-    this.ship.body.isStatic = true;
+    // this.ship.body.isStatic = true;
+    // this.ship.body.ignoreGravity = true;
+    console.log(this.ship)
 
 
     // this.cameras.main.startFollow(ship);
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-    graphics.strokeCircleShape(planet);
-    graphics.fillCircleShape(planet);
+    graphics.strokeCircleShape(this.planet);
+    graphics.fillCircleShape(this.planet);
 }
 
 function update() {
+    // THETA += 0.05;
+    // this.ship.setVelocityX(Math.cos(THETA) * .1);
+    // this.ship.setVelocityY(Math.sin(THETA) * .1);
+
+    // var cos = Math.cos(THETA),
+    //   sin = Math.sin(THETA);
+    //
+    // var dx = this.ship.body.position.x - this.planet.x,
+    //   dy = this.ship.body.position.y - this.planet.y;
+    //
+    // this.ship.setPosition({
+    //   x: point.x + (dx * cos - dy * sin),
+    //   y: point.y + (dx * sin + dy * cos)
+    // });
+    //
+    // this.ship.setRotation(body, rotation);
+
     if (Phaser.Input.Keyboard.JustDown(spacebar)) {
         this.ship.body.isStatic = false;
+        this.planet2.body.mass = 150;
+        this.planet3.body.mass = 300;
+    }
+
+    // TODO: cap time at whenever thrust meter is full
+    if (Phaser.Input.Keyboard.DownDuration(spacebar, 100000000)) {
+        this.ship.thrust(.00001);
     }
 };
